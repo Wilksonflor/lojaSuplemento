@@ -1,9 +1,15 @@
 const client = require("../../models/db");
 
 const getProdutos = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
   try {
-    const result = await client.query("SELECT * FROM produtos");
-    res.json(result.rows);
+    const result = await client.query(
+      "SELECT * FROM produtos LIMIT $1 OFFSET $2",
+      [limit, offset]
+    );
+    console.log("Produtos:", result);
+    res.status(200).json(result.rows);
   } catch (error) {
     console.log("Erro ao buscar produtos", error);
     res.status(500).json({ error: "Erro no servidor" });
@@ -11,54 +17,57 @@ const getProdutos = async (req, res) => {
 };
 
 const createProduto = async (req, res) => {
-  const { nome, descricao, preco } = req.body;
+  const { nome, descricao, preco, categoria } = req.body;
+
   try {
     const result = await client.query(
-      "INSERT INTO produtos (nome, descricao, preco) VALUES ($1,$2,$3) RETURNING *",
-      [nome, descricao, preco]
+      "INSERT INTO produtos (nome, descricao, preco, categoria) VALUES ($1, $2, $3, $4) RETURNING *",
+      [nome, descricao, preco, categoria || "Sem categoria"]
     );
-    res.status(200).json(result.rows[0]);
+
+    res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.log("Erro ao criar produto", error);
+    console.error("Erro ao criar produto:", error);
     res.status(500).json({ error: "Erro no servidor ao criar produto" });
   }
 };
 
 const updateProduto = async (req, res) => {
   const { id } = req.params;
-  const { nome, descricao, preco } = req.body;
+  const { nome, descricao, preco, categoria } = req.body;
 
   try {
     const result = await client.query(
-      "UPDATE produtos SET nome = $1, descricao = $2, preco = $3,data_atualizacao = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *"[
-        (nome, descricao, preco, id)
-      ]
+      "UPDATE produtos SET nome = $1, descricao = $2,categoria = $3 preco = $4, data_atualizacao = CURRENT_TIMESTAMP WHERE id = $5 RETURNING *",
+      [nome, descricao, categoria, preco, id]
     );
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Produto não encontrado!" });
     }
-    res.status(200).json(result.rows[0]); //retorna o preço atualizado
+    res.status(200).json(result.rows[0]);
   } catch (error) {
     console.log("erro ao atualziar o produto", error);
     res.status(500).json({ error: "Erro no servidor ao atualizar o produto" });
   }
 };
 
-const deletProduto = async (req, res) => {
-  const { id } = req.params; //o ID do produto será passado como parametros na url
+const deleteProduto = async (req, res) => {
+  const { id } = req.params;
 
   try {
     const result = await client.query(
-      "DELETE FROM produtos WHERE id = $1 RETURNING *"[id]
+      "DELETE FROM produtos WHERE id = $1 RETURNING *",
+      [id]
     );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Produto não encontrado!" });
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Produto não encontrado" });
     }
-    res.status(200).json({message: "Produto deletado com sucesso!"})
+    res.status(200).json({ message: "Produto deletado com sucesso" });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao deletar o produto" });
+    console.error("Erro ao deletar produto:", error);
+    res.status(500).json({ error: "Erro no servidor ao deletar produto" });
   }
 };
 
-module.exports = { getProdutos, createProduto, updateProduto, deletProduto };
+module.exports = { getProdutos, createProduto, updateProduto, deleteProduto };
