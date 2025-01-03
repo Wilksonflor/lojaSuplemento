@@ -76,6 +76,12 @@ const loginUsuario = async (req, res) => {
     }
 
     const usuario = result.rows[0];
+    console.log("Usuário encontrado:", usuario);
+
+    if (!usuario.senha) {
+      return res.status(500).json({ error: "Senha não cadastrada no sistema" });
+    }
+
     const isMatch = await bcrypt.compare(senha, usuario.senha);
 
     if (!isMatch) {
@@ -88,7 +94,15 @@ const loginUsuario = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({
+      token,
+      user: {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        role: usuario.role,
+      },
+    });
   } catch (error) {
     console.error("Erro no login:", error);
     res.status(500).json({ error: "Erro no servidor" });
