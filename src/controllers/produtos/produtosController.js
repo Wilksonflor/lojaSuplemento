@@ -18,7 +18,7 @@ const getProdutos = async (req, res) => {
 
 const createProduto = async (req, res) => {
   const { nome, descricao, preco, categoria, quantidade = 0 } = req.body;
-  console.log("req.body", req.body);
+  // console.log("req.body", req.body);
   try {
     const result = await client.query(
       "INSERT INTO produtos (nome, descricao, preco, categoria, quantidade) VALUES ($1, $2, $3, $4, $5) RETURNING *",
@@ -54,6 +54,10 @@ const updateProduto = async (req, res) => {
 
 const deleteProduto = async (req, res) => {
   const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: "ID do produto não fornecido." });
+  }
 
   try {
     const result = await client.query(
