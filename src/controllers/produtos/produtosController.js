@@ -17,12 +17,12 @@ const getProdutos = async (req, res) => {
 };
 
 const createProduto = async (req, res) => {
-  const { nome, descricao, preco, categoria } = req.body;
-
+  const { nome, descricao, preco, categoria, quantidade = 0 } = req.body;
+  console.log("req.body", req.body);
   try {
     const result = await client.query(
-      "INSERT INTO produtos (nome, descricao, preco, categoria) VALUES ($1, $2, $3, $4) RETURNING *",
-      [nome, descricao, preco, categoria || "Sem categoria"]
+      "INSERT INTO produtos (nome, descricao, preco, categoria, quantidade) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [nome, descricao, preco, categoria || "Sem categoria", quantidade]
     );
 
     res.status(201).json(result.rows[0]);
@@ -38,7 +38,7 @@ const updateProduto = async (req, res) => {
 
   try {
     const result = await client.query(
-      "UPDATE produtos SET nome = $1, descricao = $2,categoria = $3 preco = $4, data_atualizacao = CURRENT_TIMESTAMP WHERE id = $5 RETURNING *",
+      "UPDATE produtos SET nome = $1, descricao = $2, categoria = $3, preco = $4, data_atualizacao = CURRENT_TIMESTAMP WHERE id = $5 RETURNING *",
       [nome, descricao, categoria, preco, id]
     );
 
@@ -47,7 +47,7 @@ const updateProduto = async (req, res) => {
     }
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.log("erro ao atualziar o produto", error);
+    console.log("Erro ao atualizar o produto", error);
     res.status(500).json({ error: "Erro no servidor ao atualizar o produto" });
   }
 };
