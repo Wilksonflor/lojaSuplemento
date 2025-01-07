@@ -17,14 +17,19 @@ const getProdutos = async (req, res) => {
 };
 
 const createProduto = async (req, res) => {
-  const { nome, descricao, preco, categoria, quantidade = 0 } = req.body;
-  // console.log("req.body", req.body);
+  const {
+    nome,
+    descricao,
+    preco,
+    categoria,
+    quantidade = 0,
+    ativo = true,
+  } = req.body;
   try {
     const result = await client.query(
-      "INSERT INTO produtos (nome, descricao, preco, categoria, quantidade) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [nome, descricao, preco, categoria || "Sem categoria", quantidade]
+      "INSERT INTO produtos (nome, descricao, preco, categoria, quantidade, ativo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [nome, descricao, preco, categoria || "Sem categoria", quantidade, ativo]
     );
-
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("Erro ao criar produto:", error);
@@ -34,12 +39,12 @@ const createProduto = async (req, res) => {
 
 const updateProduto = async (req, res) => {
   const { id } = req.params;
-  const { nome, descricao, preco, categoria } = req.body;
+  const { nome, descricao, preco, categoria, ativo } = req.body;
 
   try {
     const result = await client.query(
-      "UPDATE produtos SET nome = $1, descricao = $2, categoria = $3, preco = $4, data_atualizacao = CURRENT_TIMESTAMP WHERE id = $5 RETURNING *",
-      [nome, descricao, categoria, preco, id]
+      "UPDATE produtos SET nome = $1, descricao = $2, categoria = $3, preco = $4, ativo = $5, data_atualizacao = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *",
+      [nome, descricao, categoria, preco, ativo, id]
     );
 
     if (result.rows.length === 0) {
