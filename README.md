@@ -37,7 +37,7 @@ Esta é uma API desenvolvida em **Node.js** com **Express** e **PostgreSQL** que
 - **bcryptjs** - Criptografia de senhas.
 - **jsonwebtoken** - Autenticação baseada em tokens.
 - **CORS** - Configuração de Cross-Origin Resource Sharing.
-- **Swagger** - Documentação de API.
+- **Documentação:** Swagger (disponível em `http://localhost:3000/api-docs`).
 
 ## 📂 Estrutura do Projeto
 
