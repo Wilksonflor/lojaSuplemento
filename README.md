@@ -223,6 +223,11 @@ npm start
 
 Utilize ferramentas como **Insomnia** ou **Postman** para testar os endpoints da API.
 
+Se preferir, pode utilizar o swagger que está disponível em:
+
+```
+http://localhost:3000/api-docs).
+```
 ## 🤝 Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir Issues ou enviar Pull Requests.
