@@ -25,8 +25,23 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Lista de movimentações
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   usuario_id:
+ *                     type: string
+ *                   tipo:
+ *                     type: string
+ *                   criado_em:
+ *                     type: string
+ *                     format: date-time
  */
-router.get("/", authMiddleware, getMovimentacoes);
 
 /**
  * @swagger
@@ -56,10 +71,18 @@ router.get("/", authMiddleware, getMovimentacoes);
  *                       type: string
  *                     quantidade:
  *                       type: number
+ *             example:
+ *               usuario_id: "12345"
+ *               tipo: "entrada"
+ *               produtos:
+ *                 - produto_id: "67890"
+ *                   quantidade: 5
  *     responses:
  *       201:
  *         description: Movimentação criada com sucesso
  */
+
+router.get("/", authMiddleware, getMovimentacoes);
 router.post("/", authMiddleware, createMovimentacao);
 
 module.exports = router;

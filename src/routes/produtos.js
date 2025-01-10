@@ -27,8 +27,34 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Lista de produtos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   nome:
+ *                     type: string
+ *                   descricao:
+ *                     type: string
+ *                   preco:
+ *                     type: number
+ *                   quantidade:
+ *                     type: number
+ *                   categoria:
+ *                     type: string
+ *                   ativo:
+ *                     type: boolean
+ *                   criado_em:
+ *                     type: string
+ *                     format: date-time
+ *                   atualizado_em:
+ *                     type: string
+ *                     format: date-time
  */
-router.get("/", authMiddleware, getProdutos);
 
 /**
  * @swagger
@@ -51,11 +77,23 @@ router.get("/", authMiddleware, getProdutos);
  *                 type: string
  *               preco:
  *                 type: number
+ *               quantidade:
+ *                 type: number
+ *               categoria:
+ *                 type: string
+ *               ativo:
+ *                 type: boolean
+ *             example:
+ *               nome: "Produto A"
+ *               descricao: "Descrição do produto"
+ *               preco: 25.5
+ *               quantidade: 10
+ *               categoria: "Suplementos"
+ *               ativo: true
  *     responses:
  *       201:
  *         description: Produto criado com sucesso
  */
-router.post("/", authMiddleware, createProduto);
 
 /**
  * @swagger
@@ -85,11 +123,23 @@ router.post("/", authMiddleware, createProduto);
  *                 type: string
  *               preco:
  *                 type: number
+ *               quantidade:
+ *                 type: number
+ *               categoria:
+ *                 type: string
+ *               ativo:
+ *                 type: boolean
+ *             example:
+ *               nome: "Produto Atualizado"
+ *               descricao: "Descrição atualizada"
+ *               preco: 30.0
+ *               quantidade: 15
+ *               categoria: "Vitaminas"
+ *               ativo: true
  *     responses:
  *       200:
  *         description: Produto atualizado com sucesso
  */
-router.put("/:id", authMiddleware, updateProduto);
 
 /**
  * @swagger
@@ -110,6 +160,10 @@ router.put("/:id", authMiddleware, updateProduto);
  *       200:
  *         description: Produto removido com sucesso
  */
+
+router.get("/", authMiddleware, getProdutos);
+router.post("/", authMiddleware, createProduto);
+router.put("/:id", authMiddleware, updateProduto);
 router.delete("/:id", authMiddleware, deleteProduto);
 
 module.exports = router;
